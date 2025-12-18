@@ -2,5 +2,5 @@
   "build": {
     "builder": "dockerfile"
   },
-  "start": "java -jar target/your-project-name-1.0-SNAPSHOT.jar"
+  "start": "java -jar ./snapshot/KaraokeMusicBot-1.0-SNAPSHOT.jar"
 }
