@@ -60,7 +60,7 @@ public class MusicBot extends TelegramLongPollingBot {
             // Обработка команд
             switch (messageText.toLowerCase()) {
                 case "/start":
-                    sendMessage(chatId, "Привет! Введите номер трека (например, 1, 2, 3), чтобы воспроизвести соответствующий файл из папки music.");
+                    sendMessage(chatId, "Привет! Введите номер трека (например, 1, 2, 3, но не 4!!), чтобы воспроизвести соответствующий файл из папки music.");
                     break;
                 default:
                     sendMessage(chatId, "Введите число — номер трека (например, 1, 2, 3).");
