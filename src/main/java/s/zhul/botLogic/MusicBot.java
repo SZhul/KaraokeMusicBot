@@ -70,7 +70,7 @@ public class MusicBot extends TelegramLongPollingBot {
 
     private void sendTrackByNumber(long chatId, int trackNumber) {
         try {
-            String resourcePath = "src/main/resources/music/" + trackNumber + ".mp3";
+            String resourcePath = ".src/main/resources/music/" + trackNumber + ".mp3";
             var resource = getClass().getClassLoader().getResource(resourcePath);
 
             if (resource == null) {
