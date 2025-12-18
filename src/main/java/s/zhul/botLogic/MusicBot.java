@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Properties;
 
 public class MusicBot extends TelegramLongPollingBot {
@@ -68,9 +69,43 @@ public class MusicBot extends TelegramLongPollingBot {
         }
     }
 
+    /*
+    Рабочий метод для локального запуска
+     */
+//    private void sendTrackByNumber(long chatId, int trackNumber) {
+//        try {
+//            String resourcePath = ".src/main/resources/music/" + trackNumber + ".mp3";
+//            var resource = getClass().getClassLoader().getResource(resourcePath);
+//
+//            if (resource == null) {
+//                sendMessage(chatId, "Трек с номером " + trackNumber + " не найден.");
+//                return;
+//            }
+//
+//            // Копируем в временный файл — Telegram API требует File
+//            Path tempFile = Files.createTempFile("track_", ".mp3");
+//            Files.copy(resource.openStream(), tempFile, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+//
+//            SendAudio audioRequest = new SendAudio();
+//            audioRequest.setChatId(chatId);
+//            audioRequest.setAudio(new InputFile(tempFile.toFile()));
+//            execute(audioRequest);
+//
+//            // Удалим временный файл после отправки
+//            tempFile.toFile().deleteOnExit();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            sendMessage(chatId, "Ошибка при отправке трека.");
+//        }
+//    }
+
+    /*
+    Метод для сборки в railway
+     */
     private void sendTrackByNumber(long chatId, int trackNumber) {
         try {
-            String resourcePath = ".src/main/resources/music/" + trackNumber + ".mp3";
+            String resourcePath = "music/" + trackNumber + ".mp3";
             var resource = getClass().getClassLoader().getResource(resourcePath);
 
             if (resource == null) {
@@ -80,14 +115,15 @@ public class MusicBot extends TelegramLongPollingBot {
 
             // Копируем в временный файл — Telegram API требует File
             Path tempFile = Files.createTempFile("track_", ".mp3");
-            Files.copy(resource.openStream(), tempFile, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(resource.openStream(), tempFile, StandardCopyOption.REPLACE_EXISTING);
 
             SendAudio audioRequest = new SendAudio();
             audioRequest.setChatId(chatId);
             audioRequest.setAudio(new InputFile(tempFile.toFile()));
+
             execute(audioRequest);
 
-            // Удалим временный файл после отправки
+            // Удаляем временный файл после отправки
             tempFile.toFile().deleteOnExit();
 
         } catch (Exception e) {
