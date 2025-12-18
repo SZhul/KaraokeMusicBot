@@ -1,6 +1,6 @@
 {
   "build": {
-    "builder": "dockerfile"
+    "builder": "pack"
   },
   "start": "java -jar ./snapshot/KaraokeMusicBot-1.0-SNAPSHOT.jar"
 }
