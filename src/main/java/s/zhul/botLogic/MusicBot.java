@@ -70,25 +70,29 @@ public class MusicBot extends TelegramLongPollingBot {
 
     private void sendTrackByNumber(long chatId, int trackNumber) {
         try {
-            // Формируем путь: ./music/{trackNumber}.mp3
-            Path trackPath = Path.of(MUSIC_DIR, trackNumber + ".mp3");
+            String resourcePath = "src/main/resources/music/" + trackNumber + ".mp3";
+            var resource = getClass().getClassLoader().getResource(resourcePath);
 
-            // Проверяем, существует ли файл
-            if (!Files.exists(trackPath)) {
-                sendMessage(chatId, "Трек с номером " + trackNumber + " не найден. Убедитесь, что файл " + trackNumber + ".mp3 существует в папке music.");
+            if (resource == null) {
+                sendMessage(chatId, "Трек с номером " + trackNumber + " не найден.");
                 return;
             }
 
-            // Отправляем аудио
+            // Копируем в временный файл — Telegram API требует File
+            Path tempFile = Files.createTempFile("track_", ".mp3");
+            Files.copy(resource.openStream(), tempFile, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+
             SendAudio audioRequest = new SendAudio();
             audioRequest.setChatId(chatId);
-            audioRequest.setAudio(new InputFile(trackPath.toFile()));
-
+            audioRequest.setAudio(new InputFile(tempFile.toFile()));
             execute(audioRequest);
 
-        } catch (TelegramApiException e) {
-            System.err.println("Ошибка отправки аудио: " + e.getMessage());
-            sendMessage(chatId, "Не удалось отправить трек. Ошибка: " + e.getMessage());
+            // Удалим временный файл после отправки
+            tempFile.toFile().deleteOnExit();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            sendMessage(chatId, "Ошибка при отправке трека.");
         }
     }
 
@@ -118,30 +122,31 @@ public class MusicBot extends TelegramLongPollingBot {
     /*
     Это метод для загрузки настроек из файла application.properties
      */
-//    private void loadProperties() {
-//        Properties prop = new Properties();
-//        try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
-//            if (input == null) {
-//                throw new RuntimeException("Файл application.properties не найден в resources");
-//            }
-//            prop.load(input);
-//            BOT_USERNAME = prop.getProperty("BOT_USERNAME");
-//            BOT_TOKEN = prop.getProperty("BOT_TOKEN");
-//        } catch (IOException e) {
-//            throw new RuntimeException("Ошибка при загрузке настроек", e);
-//        }
-//    }
+    private void loadProperties() {
+        Properties prop = new Properties();
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
+            if (input == null) {
+                throw new RuntimeException("Файл application.properties не найден в resources");
+            }
+            prop.load(input);
+            BOT_USERNAME = prop.getProperty("BOT_USERNAME");
+            BOT_TOKEN = prop.getProperty("BOT_TOKEN");
+        } catch (IOException e) {
+            throw new RuntimeException("Ошибка при загрузке настроек", e);
+        }
+    }
 
     /*
      Это метод для загрузки настроек из переменных окружения для бесплатного хостинга
      */
-    private void loadProperties() {
-        BOT_USERNAME = System.getenv("BOT_USERNAME");
-        BOT_TOKEN = System.getenv("BOT_TOKEN");
+//    private void loadProperties() {
+//        BOT_USERNAME = System.getenv("BOT_USERNAME");
+//        BOT_TOKEN = System.getenv("BOT_TOKEN");
+//
+//        if (BOT_USERNAME == null || BOT_TOKEN == null) {
+//            throw new RuntimeException("BOT_USERNAME and BOT_TOKEN must be set as environment variables!");
+//        }
+//    }
 
-        if (BOT_USERNAME == null || BOT_TOKEN == null) {
-            throw new RuntimeException("BOT_USERNAME и BOT_TOKEN должны быть заданы в переменных окружения!");
-        }
-    }
 }
 

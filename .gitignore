@@ -39,3 +39,11 @@ build/
 
 # Конфиденциальные данные
 src/main/resources/application.properties
+
+# Временные файлы
+*.tmp
+*~
+/temp/
+
+# Папка target
+/target/

@@ -2,5 +2,5 @@
   "build": {
     "builderType": "pack"
   },
-  "start": "java -jar ./snapshot/KaraokeMusicBot-1.0-SNAPSHOT.jar"
+  "start": "java -jar target/KaraokeMusicBot-1.0-SNAPSHOT.jar"
 }
