@@ -115,17 +115,32 @@ public class MusicBot extends TelegramLongPollingBot {
         return BOT_TOKEN;
     }
 
+    /*
+    Это метод для загрузки настроек из файла application.properties
+     */
+//    private void loadProperties() {
+//        Properties prop = new Properties();
+//        try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
+//            if (input == null) {
+//                throw new RuntimeException("Файл application.properties не найден в resources");
+//            }
+//            prop.load(input);
+//            BOT_USERNAME = prop.getProperty("BOT_USERNAME");
+//            BOT_TOKEN = prop.getProperty("BOT_TOKEN");
+//        } catch (IOException e) {
+//            throw new RuntimeException("Ошибка при загрузке настроек", e);
+//        }
+//    }
+
+    /*
+     Это метод для загрузки настроек из переменных окружения для бесплатного хостинга
+     */
     private void loadProperties() {
-        Properties prop = new Properties();
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("application.properties")) {
-            if (input == null) {
-                throw new RuntimeException("Файл application.properties не найден в resources");
-            }
-            prop.load(input);
-            BOT_USERNAME = prop.getProperty("BOT_USERNAME");
-            BOT_TOKEN = prop.getProperty("BOT_TOKEN");
-        } catch (IOException e) {
-            throw new RuntimeException("Ошибка при загрузке настроек", e);
+        BOT_USERNAME = System.getenv("BOT_USERNAME");
+        BOT_TOKEN = System.getenv("BOT_TOKEN");
+
+        if (BOT_USERNAME == null || BOT_TOKEN == null) {
+            throw new RuntimeException("BOT_USERNAME и BOT_TOKEN должны быть заданы в переменных окружения!");
         }
     }
 }
